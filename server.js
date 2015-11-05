@@ -8,8 +8,6 @@ app.get("/", function(req, res) {
   res.sendFile(__dirname + "/index.html");
 });
 
-
-
 // Start server
 var port = process.env.PORT || 8000;
 var server = app.listen(port, function () {
@@ -35,7 +33,7 @@ function streamBuses(){
       var data = JSON.parse(body);
       console.dir(data);
       // SEND DATA TO CLIENTS HERE
-      
+
     })
 
   }).on('error', function(e) {
