@@ -1,0 +1,20 @@
+{
+  "name": "ttc-buses",
+  "version": "1.0.0",
+  "description": "A toy data visualization of near real time Toronto bus location",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tayden/TTC-Buses.git"
+  },
+  "author": "Taylor Denouden",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tayden/TTC-Buses/issues"
+  },
+  "homepage": "https://github.com/tayden/TTC-Buses#readme"
+}
