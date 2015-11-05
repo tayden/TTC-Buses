@@ -16,5 +16,10 @@
   "bugs": {
     "url": "https://github.com/tayden/TTC-Buses/issues"
   },
-  "homepage": "https://github.com/tayden/TTC-Buses#readme"
+  "homepage": "https://github.com/tayden/TTC-Buses#readme",
+  "dependencies": {
+    "express": "^4.13.3",
+    "restbus": "^1.1.0",
+    "socket.io": "^1.3.7"
+  }
 }
