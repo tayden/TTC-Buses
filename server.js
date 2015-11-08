@@ -1,4 +1,5 @@
-var app = require('express')();
+var express = require('express');
+var app = express();
 var http = require('http');
 var server = http.Server(app);
 var io = require('socket.io')(server);
@@ -11,9 +12,8 @@ io.on('connection', function(socket){
   socket.emit('data', { data: data });
 });
 
-app.get("/", function(req, res) {
-  res.sendFile(__dirname + "/index.html");
-});
+app.get("/", function(req, res) { res.sendFile(__dirname + "/index.html"); });
+app.use("/scripts", express.static(__dirname + "/scripts"));
 
 // Start server
 var port = process.env.PORT || 8000;
