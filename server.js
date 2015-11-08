@@ -1,8 +1,15 @@
-var express = require("express");
-var app = express();
+var app = require('express')();
+var http = require('http');
+var server = http.Server(app);
+var io = require('socket.io')(server);
 var restbus = require("restbus");
-var http = require("http");
-var socket = require("socket.io");
+
+var data;
+
+io.on('connection', function(socket){
+  console.log('a user connected');
+  socket.emit('data', { data: data });
+});
 
 app.get("/", function(req, res) {
   res.sendFile(__dirname + "/index.html");
@@ -10,7 +17,7 @@ app.get("/", function(req, res) {
 
 // Start server
 var port = process.env.PORT || 8000;
-var server = app.listen(port, function () {
+server.listen(port, function () {
   console.log('App listening on port %s', port);
 
   restbus.listen(3535, function() {
@@ -30,10 +37,10 @@ function streamBuses(){
     });
 
     res.on('end', function() {
-      var data = JSON.parse(body);
-      console.dir(data);
-      // SEND DATA TO CLIENTS HERE
-
+      data = JSON.parse(body);
+      // console.dir(data);
+      // send data to clients
+      io.emit('data', { data: data });
     })
 
   }).on('error', function(e) {
