@@ -47,5 +47,5 @@ function streamBuses(){
     console.log("Got error: " + e.message);
   });
 
-  setTimeout(streamBuses,10*1000);
+  setTimeout(streamBuses,20*1000);
 }
