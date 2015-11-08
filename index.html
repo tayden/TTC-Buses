@@ -2,29 +2,43 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>TTC Buses</title>
+    <title>LA Metro Buses</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" integrity="sha384-aUGj/X2zp5rLCbBxumKTCw2Z50WgIr1vs/PFN4praOTvYXWlVyh2UtNUU0KAUhAX" crossorigin="anonymous">
-    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v1.0.0-beta.2/leaflet.css" />
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
     <style media="screen">
       #map {
-        height: 500px;
+        height: 550px;
+      }
+      #legend div {
+        display: inline-block;
+        font-size: 8px;
       }
     </style>
   </head>
   <body>
     <div class="container">
-      <h1>TTC Buses</h1>
+      <h1>LA Metro Buses</h1>
       <div class="col-xs-12" id="map"></div>
-
+      <div class="pull-left" id="legend"><strong>Speed (km/h):</strong> </div>
+      <div class="pull-right">Taylor Denouden (2015)</div>
     </div>
 
     <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
-    <script src="http://cdn.leafletjs.com/leaflet/v1.0.0-beta.2/leaflet.js"></script>
+    <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.js"></script>
+    <script src="http://api.tiles.mapbox.com/mapbox.js/plugins/turf/v2.0.0/turf.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script>
-      var map = L.map("map").setView([43.67, -79.39], 12);
+      var colorScale = d3.scale.linear().domain(d3.range(0,70,10)).range(["#ffffb2","#fed976","#feb24c","#fd8d3c","#fc4e2a","#e31a1c","#b10026"].reverse()).clamp(true);
+
+      var buses = L.layerGroup();
+      var map = L.map("map", {
+        center: [34.04, -118.24],
+        zoom: 12,
+        layers: [buses]
+      });
 
       L.tileLayer('http://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}.{ext}', {
           attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -34,8 +48,14 @@
           ext: 'png'
       }).addTo(map);
 
-      var buses = L.layerGroup();
-      buses.addTo(map);
+      d3.select("#legend").selectAll("div")
+          .data(d3.range(0,70, 10))
+        .enter().append("div")
+          .style("width", "50px")
+          .style("height", "10px")
+          .style("background-color", function(d) { return colorScale(d); })
+          .attr("class", "text-center")
+          .html(function(d) { return d === 60 ? d.toString() + "+" : d; });
 
       var socket = io();
       socket.on('data', function(data) {
@@ -44,16 +64,16 @@
 
         data.data.forEach(function(bus) {
           L.circleMarker([bus.lat, bus.lon], {
-            radius: 2,
-            weight: 1,
-            color: "#733",
-            fillColor: "#ff0000",
-            fillOpacity: 0.5
-          }).addTo(buses);
-        })
-
+                radius: 4,
+                weight: 1,
+                color: "#733",
+                fillColor: colorScale(bus.kph || 0),
+                fillOpacity: 0.8,
+              })
+            .bindPopup("<strong>Route:</strong> " + bus.routeId + "<br><strong>Speed:</strong> " + bus.kph + "km/h")
+            .addTo(buses);
+        });
       });
-
     </script>
   </body>
 </html>

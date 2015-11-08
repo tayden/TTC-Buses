@@ -29,7 +29,7 @@ server.listen(port, function () {
 });
 
 function streamBuses(){
-  http.get("http://localhost:3535/agencies/ttc/vehicles", function(res) {
+  http.get("http://localhost:3535/agencies/lametro/vehicles", function(res) {
     console.log("Got response: " + res.statusCode);
     var body = '';
     res.on('data', function (chunk) {
@@ -47,5 +47,5 @@ function streamBuses(){
     console.log("Got error: " + e.message);
   });
 
-  setTimeout(streamBuses, 1000);
+  setTimeout(streamBuses,10*1000);
 }
